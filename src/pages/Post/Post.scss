@@ -1,0 +1,45 @@
+@import "../../sass/main.scss";
+
+.post {
+  width: 100%;
+  background: $base-bg-color;
+  padding: 0 30%;
+  margin-top: 20px;
+  @include sm {
+    padding: 0 0%;
+    margin-top: 0px;
+  }
+
+  .post-loading {
+    display: flex;
+    justify-content: center;
+  }
+
+  .post-line {
+    margin-top: 10px;
+  }
+
+  .container {
+    border-radius: $base-border-radius;
+    border: 1px solid $base-black-color;
+    background-color: white;
+    padding: 20px;
+    @include sm {
+      border: none;
+      height: 100%;
+    }
+
+    .post-auth {
+      margin-top: 10px;
+      font-size: $f-mid;
+
+      a {
+        color: $base-blue-color;
+      }
+    }
+
+    .post-commentForm {
+      margin-top: 10px;
+    }
+  }
+}
