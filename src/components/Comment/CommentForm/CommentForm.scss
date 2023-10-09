@@ -1,0 +1,28 @@
+@import "../../../sass/main.scss";
+
+.comment-form {
+  textarea {
+    flex: 5;
+    padding: 10px;
+    width: 100%;
+    border-radius: $base-border-radius;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+    // background-color: transparent;
+  }
+
+  .comment-button {
+    text-align: right;
+    margin-top: 5px;
+
+    button {
+      @include btn;
+      padding: 10px;
+      border-radius: $base-border-radius;
+      background: $base-blue-color;
+      color: white;
+      margin-right: 5px;
+    }
+  }
+}

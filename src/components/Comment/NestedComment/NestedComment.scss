@@ -1,0 +1,73 @@
+@import "../../../sass/main.scss";
+
+.nestedcomment {
+  margin: 10px 0 10px;
+  width: 101%;
+  float: right;
+  background-color: #f5f5f5;
+  border-radius: $base-border-radius;
+
+  .nestedcomment-info {
+    display: flex;
+    margin: 5px 0 0 5px;
+    justify-content: space-between;
+    align-items: center;
+
+    .nestedcomment-space {
+      display: flex;
+      gap: 5px;
+
+      .nestedcomment-info-img {
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .nestedcomment-details {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .nestedcomment-name {
+          font-weight: bold;
+          font-size: $base-font-sm;
+        }
+
+        .nestedcomment-date {
+          font-size: $base-font-sm;
+          color: $base-main-color;
+        }
+      }
+    }
+
+    .nestedcomment-dropdown {
+      margin-right: 10px;
+    }
+  }
+
+  .nestedcomment-description {
+    word-break: break-all;
+    margin: 5px 0 5px 5px;
+    font-size: 14px;
+  }
+
+  .nestedcomments-like {
+    display: flex;
+    justify-items: center;
+    gap: 2px;
+    font-size: $f-small;
+    margin: 10px 0 5px 5px;
+
+    .like-button {
+      cursor: Default;
+    }
+
+    span {
+      display: flex;
+      justify-items: center;
+    }
+  }
+
+  .nestedcomment-active {
+    margin-top: 10px;
+  }
+}

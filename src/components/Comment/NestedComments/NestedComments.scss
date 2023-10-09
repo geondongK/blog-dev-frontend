@@ -1,0 +1,72 @@
+@import "../../../sass/main.scss";
+
+.nestedcomments {
+  margin-top: 20px;
+
+  .nestedcomments-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .nestedcomments-space {
+      display: flex;
+      gap: 5px;
+
+      .nestedcomments-info-img {
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .nestedcomments-details {
+        display: flex;
+        flex-direction: column;
+
+        .nestedcomments-name {
+          font-weight: bold;
+          font-size: $base-font-sm;
+        }
+
+        .nestedcomments-date {
+          font-size: $base-font-sm;
+          color: $base-main-color;
+        }
+      }
+    }
+
+    .nestedcomment-dropdown {
+      margin-right: 10px;
+    }
+  }
+
+  .nestedcomments-description__deleted {
+    margin: 5px 0 5px 5px;
+    font-size: 13px;
+    color: #757575;
+  }
+
+  .nestedcomments-description {
+    word-break: break-all;
+    margin: 5px 0 5px;
+    font-size: 14px;
+  }
+
+  .nestedcomments-button {
+    display: flex;
+    justify-items: center;
+    font-size: $f-small;
+    margin-top: 10px;
+
+    .like-button {
+      cursor: Default;
+    }
+
+    span {
+      margin-left: 3px;
+      margin-right: 3px;
+    }
+  }
+
+  .nestedcomments-active {
+    margin-top: 10px;
+  }
+}
