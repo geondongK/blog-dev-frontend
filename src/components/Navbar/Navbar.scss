@@ -1,0 +1,136 @@
+@import "../../sass/main.scss";
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 7%;
+  height: 50px;
+  background-color: #fafafa;
+  border-bottom: 1px solid lightgray;
+  z-index: 1000;
+  position: sticky;
+  top: 0;
+
+  @include sm {
+    padding: 15px;
+  }
+
+  #nav-menu {
+    display: none;
+  }
+
+  @include sm {
+    #nav-menu:checked ~ .nav-right {
+      display: initial;
+    }
+  }
+
+  label {
+    cursor: pointer;
+    display: none;
+    @include sm {
+      display: initial;
+    }
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .nav-logo {
+      @include btn;
+      color: #000000;
+      font-weight: bold;
+      font-size: $base-font-size * 1.1;
+      &:hover {
+        color: $base-sub-color;
+      }
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid lightgray;
+
+      border-radius: 5px;
+      padding: $base-border-radius;
+
+      input {
+        width: 300px;
+        border: none;
+        outline: none;
+        background-color: white;
+        @include sm {
+          width: 150px;
+        }
+      }
+
+      input::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        width: 10px;
+        height: 10px;
+        margin-right: 5px;
+        background: url("../../assets/images/xmark.svg") center center no-repeat;
+        background-size: cover;
+        cursor: pointer;
+      }
+
+      input[type="search"]::-webkit-search-decoration {
+        -webkit-appearance: none;
+      }
+    }
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    position: relative;
+    float: left;
+    // gap: 5px;
+    @include sm {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: #fafafa;
+      border-top: 1px solid #000;
+      display: none;
+      height: 100vh;
+      // width: 100%;
+    }
+
+    button {
+      @include btn;
+      font-size: $base-font-size;
+      border-radius: $base-border-radius;
+      padding: 4px;
+      // font-weight: bold;
+      &:hover {
+        background-color: #eeeeee;
+      }
+
+      @include sm {
+        width: 100%;
+        font-weight: bold;
+        font-size: $base-font-size;
+        text-align: left;
+        padding: 20px;
+        color: #616161;
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+
+    i {
+      display: none;
+      @include sm {
+        display: initial;
+        margin-right: 10px;
+      }
+    }
+  }
+}
