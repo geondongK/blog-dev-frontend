@@ -21,7 +21,7 @@ function CommentDropdown({ commentId, deleteComment, setActiveComment }) {
   const handleOptions = (option) => {
     if (option === "편집") {
       setActiveComment({
-        commentId: commentId,
+        id: commentId,
         type: "editing",
       });
     } else if (option === "삭제") {

@@ -46,7 +46,7 @@ function NestedComment({
       .post("/liked", {
         postId: id,
         commentId: addLikeId,
-        writerId: currentUser.user.id,
+        writerId: currentUser[0].userId,
       })
       .then((response) => {
         setLiked([...liked, response.data]);
@@ -62,14 +62,14 @@ function NestedComment({
       .delete("/liked", {
         data: {
           commentId: deleteCommentId,
-          writerId: currentUser.user.id,
+          writerId: currentUser[0].userId,
         },
       })
       .then(() => {
         const deleteLiked = liked.filter(
           (deleteLike) =>
             deleteLike.commentId === commentId &&
-            deleteLike.writerId !== currentUser.user.id
+            deleteLike.writerId !== currentUser[0].userId
         );
         setLiked(deleteLiked);
       })
@@ -78,23 +78,23 @@ function NestedComment({
       });
   };
 
-  // function dropdownComponent() {
-  //   if (currentUser !== null) {
-  //     if (writerId === currentUser.user.id) {
-  //       return (
-  //         <CommentDropdown
-  //           commentId={commentId}
-  //           deleteComment={deleteComment}
-  //           activeComment={activeComment}
-  //           setActiveComment={setActiveComment}
-  //           editComment={editComment}
-  //         />
-  //       );
-  //     }
-  //     return null;
-  //   }
-  //   return null;
-  // }
+  function dropdownComponent() {
+    if (currentUser !== null) {
+      if (writerId === currentUser[0].userId) {
+        return (
+          <CommentDropdown
+            commentId={commentId}
+            deleteComment={deleteComment}
+            activeComment={activeComment}
+            setActiveComment={setActiveComment}
+            editComment={editComment}
+          />
+        );
+      }
+      return null;
+    }
+    return null;
+  }
 
   function likedButtonComponent() {
     if (currentUser !== null) {
@@ -102,7 +102,7 @@ function NestedComment({
         liked.some(
           (likeButton) =>
             likeButton.commentId === commentId &&
-            likeButton.userId === currentUser.user.id
+            likeButton.userId === currentUser[0].userId
         )
       ) {
         return (
@@ -159,11 +159,10 @@ function NestedComment({
             <span className="nestedcomment-name">{writer}</span>
             <span className="nestedcomment-date">
               {moment(createDate, "YYYY-M-D").format("YYYY년 M월 D일")}
-              {moment(createDate).format("YYYY년 M월 D일")}
             </span>
           </div>
         </div>
-        {/* <div className="nestedcomment-dropdown">{dropdownComponent()}</div> */}
+        <div className="nestedcomment-dropdown">{dropdownComponent()}</div>
       </div>
       <p className="nestedcomment-description">{description}</p>
       <div className="nestedcomments-like">
@@ -178,7 +177,7 @@ function NestedComment({
             handleCancelButton
             initialText={description}
             handleSubmit={(newComment) => {
-              editComment(newComment, commentId);
+              editComment(commentId, newComment);
             }}
             handleCancel={() => setActiveComment(null)}
           />

@@ -5,9 +5,17 @@ import { useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import Postcontent from "../../components/PostContent/PostContent";
-// import PostComments from "../../components/Comments/Comments/Comments";
-// import PostCommentForm from "../../components/Comments/CommentForm/CommentForm";
-import customAxios from "../../libs/api/axios";
+import PostComments from "../../components/Comment/Comment/Comment";
+import PostCommentForm from "../../components/Comment/CommentForm/CommentForm";
+import customAxios from "../../libs/service/api/axios";
+import {
+  getCommentApi,
+  createCommentApi,
+  updateCommentApi,
+  deleteCommentApi,
+  existsByCommentApi,
+} from "../../libs/service/commentService";
+import { getPostApi } from "../../libs/service/postService";
 // import authContext from "../../libs/api/AuthContext";
 // import Loading from "../../components/Loading/Loading";
 import "moment/locale/ko";
@@ -45,18 +53,20 @@ function Post() {
   // 댓글 or 대댓글 작성.
   const addComment = async (newComment, parentId) => {
     // await authContext
-    await customAxios
-      .post("/comment", {
-        id: null,
-        postId: id,
-        userId: currentUser.user.id,
-        description: newComment,
-        userName: currentUser.user.name,
-        parentId,
-        createDate: nowTime,
-      })
+
+    // .post("/comment", {
+    await createCommentApi({
+      // id: null,
+      postId: id,
+      writerId: currentUser[0].userId,
+      description: newComment,
+      writer: currentUser[0].name,
+      commentGroup: parentId,
+      parentId,
+      //createDate: nowTime,
+    })
       .then((response) => {
-        setPostComments([...postComments, response.data]);
+        setPostComments([...postComments, ...response.data]);
         setActiveComment(null);
       })
       .catch(() => {
@@ -65,16 +75,13 @@ function Post() {
   };
 
   // 댓글 & 답글 수정 기능
-  const editComment = async (newComment, commentId) => {
-    // await authContext
-    await customAxios
-      .put(`/comment`, {
-        newComment,
-        commentId,
-      })
+  const editComment = async (commentId, newComment) => {
+    await updateCommentApi(commentId, {
+      description: newComment,
+    })
       .then(() => {
         const updateComments = postComments.map((updateComment) => {
-          if (updateComment.id === commentId) {
+          if (updateComment.commentId === commentId) {
             return {
               ...updateComment,
               description: newComment,
@@ -98,18 +105,18 @@ function Post() {
         getCommentsGroup.id === commentId
     );
 
-    if (commentsGroup.length > 1) {
+    if (commentsGroup.length >= 1) {
       //   await authContext
-      await customAxios
-        .put(`/comment/existComment`, {
-          commentId,
-        })
+      // await customAxios.put(`/comment/existComment`, {
+      //   commentId,
+      // });
+      await existsByCommentApi(commentId)
         .then(() => {
           const updateComments = postComments.map((updateComment) => {
-            if (updateComment.id === commentId) {
+            if (updateComment.commentId === commentId) {
               return {
                 ...updateComment,
-                isDeleted: 1,
+                isDeleted: true,
               };
             }
             return updateComment;
@@ -121,16 +128,10 @@ function Post() {
           // console.log(error);
         });
     } else {
-      //   await authContext
-      await customAxios
-        .delete(`/comment`, {
-          data: {
-            commentId,
-          },
-        })
+      await deleteCommentApi(commentId)
         .then(() => {
           const newComments = postComments.filter(
-            (newComment) => newComment.id !== commentId
+            (newComment) => newComment.commentId !== commentId
           );
           setPostComments(newComments);
         })
@@ -138,18 +139,13 @@ function Post() {
           // console.log(error);
         });
     }
-
-    // if(commentsGroup.length > 1) {
-
-    // }
   };
 
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
       try {
-        const response = await customAxios.get(`/posts/${id}`);
-        console.log(response.data);
+        const response = await getPostApi(id);
         setPostcontents(response.data);
       } catch (error) {
         // console.log(error);
@@ -160,10 +156,10 @@ function Post() {
     const fetchComments = async () => {
       setLoading(true);
       try {
-        // const response = await customAxios.get(`/comment/${id}`);
-        // setPostComments(response.data);
+        const response = await getCommentApi(id);
+        setPostComments(response.data);
       } catch (error) {
-        // console.log(error);
+        console.log(error);
       }
       setLoading(false);
     };
@@ -182,26 +178,26 @@ function Post() {
             <Postcontent
               postcontent={postcontent}
               // Dompurify 데이터 받기.
-              description={postcontent.postDescription}
+              description={postcontent.description}
               key={postcontent.postId}
             />
           ))}
           <hr className="post-line" />
-          {/* {postComment.map((mainPostComment) => (
+          {postComment.map((mainPostComment) => (
             <PostComments
-              key={mainPostComment.id}
-              commentId={mainPostComment.id}
+              key={mainPostComment.commentId}
+              commentId={mainPostComment.commentId}
               isDeleted={mainPostComment.isDeleted}
               mainPostComment={mainPostComment}
-              subPostComment={getNestedComments(mainPostComment.id)}
+              subPostComment={getNestedComments(mainPostComment.commentId)}
               addComment={addComment}
               editComment={editComment}
               deleteComment={deleteComment}
               activeComment={activeComment}
               setActiveComment={setActiveComment}
             />
-          ))} */}
-          {/* {!currentUser ? (
+          ))}
+          {!currentUser ? (
             <h4 className="post-auth">
               <Link to="/login">로그인</Link>을 하셔야 댓글을 작성할 수 있습니다
             </h4>
@@ -215,7 +211,7 @@ function Post() {
                 }}
               />
             </div>
-          )} */}
+          )}
         </div>
       )}
     </div>

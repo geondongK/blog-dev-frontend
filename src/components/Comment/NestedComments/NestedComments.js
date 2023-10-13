@@ -40,7 +40,7 @@ function NestedComments({
   const isReplying =
     activeComment &&
     activeComment.type === "replying" &&
-    // activeComment.id === commentId &&
+    activeComment.id === commentId &&
     currentUser !== null;
 
   // 수정 클릭일 경우.
@@ -56,7 +56,7 @@ function NestedComments({
       .post("/liked", {
         postId: id,
         commentId: addLikeId,
-        writerId: currentUser.user.id,
+        writerId: currentUser[0].userId,
       })
       .then((response) => {
         setLiked([...liked, response.data]);
@@ -72,14 +72,14 @@ function NestedComments({
       .delete("/liked", {
         data: {
           commentId: deleteCommentId,
-          //writerId: currentUser.user.id,
+          writerId: currentUser[0].userId,
         },
       })
       .then(() => {
         const deleteLiked = liked.filter(
           (deleteLike) =>
             deleteLike.commentId === commentId &&
-            deleteLike.writerId !== currentUser.user.id
+            deleteLike.writerId !== currentUser[0].userId
         );
         setLiked(deleteLiked);
       })
@@ -89,23 +89,23 @@ function NestedComments({
   };
 
   // 편집 및 삭제
-  // function dropdownComponent() {
-  //   if (currentUser !== null) {
-  //     if (writerId === currentUser.user.id) {
-  //       return (
-  //         <CommentDropdown
-  //           commentId={commentId}
-  //           deleteComment={deleteComment}
-  //           activeComment={activeComment}
-  //           setActiveComment={setActiveComment}
-  //           editComment={editComment}
-  //         />
-  //       );
-  //     }
-  //     return null;
-  //   }
-  //   return null;
-  // }
+  function dropdownComponent() {
+    if (currentUser !== null) {
+      if (writerId === currentUser[0].userId) {
+        return (
+          <CommentDropdown
+            commentId={commentId}
+            deleteComment={deleteComment}
+            activeComment={activeComment}
+            setActiveComment={setActiveComment}
+            editComment={editComment}
+          />
+        );
+      }
+      return null;
+    }
+    return null;
+  }
 
   function likedButtonComponent() {
     if (currentUser !== null) {
@@ -113,7 +113,7 @@ function NestedComments({
         liked.some(
           (likeButton) =>
             likeButton.commentId === commentId &&
-            likeButton.userId === currentUser.user.id
+            likeButton.userId === currentUser[0].userId
         )
       ) {
         return (
@@ -169,9 +169,8 @@ function NestedComments({
             </span>
           </div>
         </div>
-        {/* <div className="nestedcomment-dropdown">{dropdownComponent()}</div> */}
+        <div className="nestedcomment-dropdown">{dropdownComponent()}</div>
       </div>
-
       {isDeleted ? (
         <p className="nestedcomments-description__deleted">삭제된 댓글입니다</p>
       ) : (
@@ -187,7 +186,7 @@ function NestedComments({
           <button
             onClick={() => {
               setActiveComment({
-                commentId: commentId,
+                id: commentId,
                 type: "replying",
               });
             }}
@@ -220,7 +219,7 @@ function NestedComments({
             handleCancelButton
             initialText={description}
             handleSubmit={(newComment) => {
-              editComment(newComment, commentId);
+              editComment(commentId, newComment);
             }}
             handleCancel={() => setActiveComment(null)}
           />
