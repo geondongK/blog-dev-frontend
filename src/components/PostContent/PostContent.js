@@ -12,16 +12,18 @@ function PostContent({ postcontent, description }) {
         <div className="postcontent-info">
           <Avatar width="30px" height="30px" className="postcontent-info-img" />
           <div className="postcontent-info-details">
-            <span className="postcontent-name">{postcontent.postName}</span>
+            <span className="postcontent-name">{postcontent.writer}</span>
             <span className="postcontent-date">
-              {moment(postcontent.postCreateDate).format("YYYY년 M월 D일")}
+              {moment(postcontent.createDate, "YYYY-M-D").format(
+                "YYYY년 M월 D일"
+              )}
             </span>
           </div>
         </div>
       </div>
 
       <div className="postcontent-title">
-        <h3 className="postcontent-title-body">{postcontent.postTitle}</h3>
+        <h3 className="postcontent-title-body">{postcontent.title}</h3>
       </div>
       <p
         className="postcontent-description"
