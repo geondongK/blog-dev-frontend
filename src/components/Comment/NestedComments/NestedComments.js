@@ -10,6 +10,11 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 //import authContext from "../../../libs/api/AuthContext";
 import customAxios from "../../../libs/service/api/axios";
+import {
+  getLikeApi,
+  addLikeApi,
+  deleteLikeApi,
+} from "../../../libs/service/likeService";
 import { ReactComponent as Avatar } from "../../../assets/images/avatar.svg";
 import CommentDropdown from "../CommentDropdown/CommentDropdown";
 import CommentForm from "../CommentForm/CommentForm";
@@ -51,35 +56,27 @@ function NestedComments({
 
   // 좋아요 추가
   const handleAddLike = async (addLikeId) => {
-    // await authContext
-    await customAxios
-      .post("/liked", {
-        postId: id,
-        commentId: addLikeId,
-        writerId: currentUser[0].userId,
-      })
+    await addLikeApi({
+      postId: id,
+      commentId: addLikeId,
+      userId: currentUser[0].userId,
+    })
       .then((response) => {
-        setLiked([...liked, response.data]);
+        setLiked([...liked, ...response.data]);
       })
       .catch(() => {
         // console.log(error);
       });
   };
+
   // 좋아요 삭제
   const handleDeleteLike = async (deleteCommentId) => {
-    // await authContext
-    await customAxios
-      .delete("/liked", {
-        data: {
-          commentId: deleteCommentId,
-          writerId: currentUser[0].userId,
-        },
-      })
+    await deleteLikeApi(deleteCommentId, currentUser[0].userId)
       .then(() => {
         const deleteLiked = liked.filter(
           (deleteLike) =>
             deleteLike.commentId === commentId &&
-            deleteLike.writerId !== currentUser[0].userId
+            deleteLike.userId !== currentUser[0].userId
         );
         setLiked(deleteLiked);
       })
@@ -127,6 +124,7 @@ function NestedComments({
           </button>
         );
       }
+
       return (
         <button
           type="button"
@@ -145,13 +143,14 @@ function NestedComments({
     );
   }
 
-  // useEffect(() => {
-  //   const fetchLiked = async () => {
-  //     const response = await customAxios.get(`/liked/${id}`);
-  //     setLiked(response.data);
-  //   };
-  //   fetchLiked();
-  // }, []);
+  useEffect(() => {
+    const fetchLiked = async () => {
+      const response = await getLikeApi(id);
+      setLiked(response.data);
+    };
+
+    fetchLiked();
+  }, []);
 
   return (
     <div className="nestedcomments">
@@ -166,6 +165,8 @@ function NestedComments({
             <span className="nestedcomments-name">{writer}</span>
             <span className="nestedcomments-date">
               {moment(createDate, "YYYY-M-D").format("YYYY년 M월 D일")}
+              {liked.userId}
+              {liked.commentId}
             </span>
           </div>
         </div>
@@ -180,7 +181,7 @@ function NestedComments({
       <div className="nestedcomments-button">
         {/* 좋아요 버튼 */}
         {likedButtonComponent()}
-        <span>{likes.length === 0 ? null : `좋아요${likes.length}`}</span>
+        <span>{likes.length === 0 ? null : `${likes.length} `}</span>
         {/* 답글 버튼 */}
         {!currentUser ? null : (
           <button
@@ -192,7 +193,7 @@ function NestedComments({
             }}
             type="button"
           >
-            답글작성
+            <span>답글작성</span>
           </button>
         )}
       </div>

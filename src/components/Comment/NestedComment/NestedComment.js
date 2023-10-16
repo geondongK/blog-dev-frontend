@@ -8,10 +8,13 @@ import { faHeart as like } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import CommentForm from "../CommentForm/CommentForm";
-import customAxios from "../../../libs/service/api/axios";
 import { ReactComponent as Avatar } from "../../../assets/images/avatar.svg";
 import CommentDropdown from "../CommentDropdown/CommentDropdown";
-// import authContext from "../../../libs/api/AuthContext";
+import {
+  addLikeApi,
+  deleteLikeApi,
+  getLikeApi,
+} from "../../../libs/service/likeService";
 
 function NestedComment({
   commentId,
@@ -41,35 +44,27 @@ function NestedComment({
 
   // 좋아요 추가
   const handleAddLike = async (addLikeId) => {
-    // await authContext
-    await customAxios
-      .post("/liked", {
-        postId: id,
-        commentId: addLikeId,
-        writerId: currentUser[0].userId,
-      })
+    await addLikeApi({
+      postId: id,
+      commentId: addLikeId,
+      userId: currentUser[0].userId,
+    })
       .then((response) => {
-        setLiked([...liked, response.data]);
+        setLiked([...liked, ...response.data]);
       })
       .catch(() => {
         // console.log(error);
       });
   };
+
   // 좋아요 삭제
   const handleDeleteLike = async (deleteCommentId) => {
-    // await authContext
-    await customAxios
-      .delete("/liked", {
-        data: {
-          commentId: deleteCommentId,
-          writerId: currentUser[0].userId,
-        },
-      })
+    await deleteLikeApi(deleteCommentId, currentUser[0].userId)
       .then(() => {
         const deleteLiked = liked.filter(
           (deleteLike) =>
             deleteLike.commentId === commentId &&
-            deleteLike.writerId !== currentUser[0].userId
+            deleteLike.userId !== currentUser[0].userId
         );
         setLiked(deleteLiked);
       })
@@ -112,12 +107,7 @@ function NestedComment({
               handleDeleteLike(commentId);
             }}
           >
-            <FontAwesomeIcon
-              style={{
-                color: "red",
-              }}
-              icon={like}
-            />
+            <FontAwesomeIcon style={{ color: "red" }} icon={like} />
           </button>
         );
       }
@@ -139,16 +129,14 @@ function NestedComment({
     );
   }
 
-  // useEffect(() => {
-  //   const fetchLiked = async () => {
-  //     const response = await customAxios.get(`/liked/${id}`);
-  //     setLiked(response.data);
-  //   };
-  //   fetchLiked();
-  // }, []);
+  useEffect(() => {
+    const fetchLiked = async () => {
+      const response = await getLikeApi(id);
+      setLiked(response.data);
+    };
 
-  // const comments = liked.commentId;
-  // const user = liked.userId;
+    fetchLiked();
+  }, []);
 
   return (
     <div className="nestedcomment">
@@ -167,7 +155,7 @@ function NestedComment({
       <p className="nestedcomment-description">{description}</p>
       <div className="nestedcomments-like">
         {likedButtonComponent()}
-        <span>{likes.length === 0 ? null : `좋아요${likes.length}`}</span>
+        <span>{likes.length === 0 ? null : `${likes.length}`}</span>
       </div>
       {isEditing && (
         <div className="nestedcomment-active">
