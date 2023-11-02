@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { ReactComponent as KaKaoIcon } from "../../../assets/images/kakaoLogin.svg";
-import customAxios from "../../../libs/api/axios";
+import customAxios from "../../../libs/service/api/axios";
+import { registerApi } from "../../../libs/service/authService";
 
 function Register() {
   const navigate = useNavigate();
@@ -43,10 +44,9 @@ function Register() {
     mode: "onSubmit",
   });
 
-  // const onSubmit = (values) => {
+  // const onSubmit = async (values) => {
   //   // reset();
-  //   customAxios
-  //     .post("/member/register", values)
+  //   await registerApi(values)
   //     .then((response) => {
   //       if (response.data.error) {
   //         setHandleRegiter(true);
@@ -62,21 +62,23 @@ function Register() {
   //       // console.log(error);
   //     });
   // };
-  const onSubmit = (values) => {
-    customAxios
-      .post("/auth/signup", values)
+  const onSubmit = async (values) => {
+    await registerApi(values)
       .then((response) => {
-        if (response) {
-        } else {
-          window.alert("회원가입되었습니다.");
-          console.log(response);
-        }
+        window.alert("회원가입되었습니다.");
+        navigate("/login");
       })
-      .catch(() => {});
+      .catch((error) => {
+        setHandleRegiter(true);
+        setRegisterMessage(error.response.data.message);
+      });
   };
 
   const kakaoRegister = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL}/auth/kakao`;
+    const CLIENT_ID = process.env.REACT_APP_KAKAO_CLIENT_ID;
+    const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT;
+
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   };
 
   const handleRegisterError = () => {

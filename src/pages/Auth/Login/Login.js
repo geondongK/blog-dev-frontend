@@ -1,14 +1,17 @@
 import "../auth.scss";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 // import { useFormik } from 'formik';
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
+
+import { setCookies, getCookies } from "../../../utils/Cookies";
 import { loginSuccess } from "../../../redux/slices/userSlice";
 import { ReactComponent as KaKaoIcon } from "../../../assets/images/kakaoLogin.svg";
-import customAxios from "../../../libs/api/axios";
+import { loginApi } from "../../../libs/service/authService";
+import axios from "../../../libs/service/api/axios";
 
 function Login() {
   const dispatch = useDispatch();
@@ -16,6 +19,8 @@ function Login() {
 
   const [handleLogin, setHandleLogin] = useState(false);
   const [loginMessage, setLoginMessage] = useState("");
+
+  // const code = new URL(window.location.href).searchParams.get("code");
 
   const schema = yup.object().shape({
     email: yup
@@ -39,29 +44,51 @@ function Login() {
     mode: "onSubmit",
   });
 
+  //   const onSubmit = async (values) => {
+  //     // reset();
+  //     customAxios
+  //       .post("auth/login", values)
+  //       .then((response) => {
+  //         console.log(response);
+  //         if (response.data.error) {
+  //           setHandleLogin(true);
+  //           setLoginMessage(response.data.error);
+  //         } else {
+  //           // 로그인 정보 저장.
+  //           console.log(response.data);
+  //           dispatch(loginSuccess(response.data));
+  //           //navigate("/");
+  //         }
+  //       })
+  //       .catch((message) => {
+  //         console.log(message);
+  //       });
+  //   };
+
   const onSubmit = async (values) => {
-    // reset();
-    customAxios
-      .post("auth/login", values)
+    await loginApi(values)
       .then((response) => {
-        console.log(response);
-        if (response.data.error) {
-          setHandleLogin(true);
-          setLoginMessage(response.data.error);
-        } else {
-          // 로그인 정보 저장.
-          console.log(response.data);
-          dispatch(loginSuccess(response.data));
-          //navigate("/");
-        }
+        const { user, token } = response.data;
+        // 로컬 스토리지에 현재 이용자 저장.
+        dispatch(loginSuccess(user));
+
+        // 쿠키 저장
+        setCookies("token", token, {
+          path: "/",
+        });
+        navigate("/");
       })
-      .catch((message) => {
-        console.log(message);
+      .catch((error) => {
+        setHandleLogin(true);
+        setLoginMessage(error.response.data.message);
       });
   };
 
   const kakaoLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL}/auth/kakao`;
+    const CLIENT_ID = process.env.REACT_APP_KAKAO_CLIENT_ID;
+    const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT;
+
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   };
 
   const handleLoginError = () => {
