@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable react/no-danger */
 // eslint-disable
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactQuill, { Quill } from "react-quill";
 import imageCompression from "browser-image-compression";
 import "../EditPost.scss";
@@ -11,8 +11,9 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import ImageResize from "quill-image-resize";
-import customAxios from "../../../libs/api/axios";
+import customAxios from "../../../libs/service/api/axios";
 // import authContext from "../../../libs/api/AuthContext";
+import { createPostApi } from "../../../libs/service/postService";
 import loading from "../../../assets/images/loading.gif";
 
 Quill.register("modules/ImageResize", ImageResize);
@@ -26,6 +27,7 @@ function AddPost() {
   const quillRef = useRef();
 
   const { currentUser } = useSelector((state) => state.user);
+
   const navigate = useNavigate();
 
   const imageHandler = async () => {
@@ -61,6 +63,8 @@ function AddPost() {
         const response = await customAxios.post("/upload", formData);
         // const response = await authContext.post("/upload", formData);
 
+        // console.log(response);
+
         const messgae = response.data.error;
 
         if (messgae === "File too large") {
@@ -72,7 +76,7 @@ function AddPost() {
         }
 
         // 압축 결과
-        const IMG_URL = response.data.location;
+        const IMG_URL = response.data;
 
         editor.deleteText(range.index, 1);
 
@@ -103,16 +107,14 @@ function AddPost() {
       return;
     }
     // authContext
-    customAxios
-      .post("/posts", {
-        //userId: currentUser.user.id,
-        postTitle: postInfo.title,
-        postDescription: postInfo.description,
-        //name: currentUser.user.name,
-      })
-      .then(() => {
-        console.log(postInfo);
-        // navigate("/");
+    createPostApi({
+      writerId: currentUser.userId,
+      title: postInfo.title,
+      description: postInfo.description,
+      writer: currentUser.name,
+    })
+      .then((response) => {
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);

@@ -6,14 +6,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
 import ImageResize from "quill-image-resize";
 // import authContext from "../../libs/api/AuthContext";
-import customAxios from "../../libs/api/axios";
+import customAxios from "../../libs/service/api/axios";
+import { updatePostApi } from "../../libs/service/postService";
 import loading from "../../assets/images/loading.gif";
 
 Quill.register("modules/ImageResize", ImageResize);
 function EditPost({ postcontent }) {
   const [postInfo, setPostInfo] = useState({
-    title: postcontent.postTitle,
-    description: postcontent.postDescription,
+    title: postcontent.title,
+    description: postcontent.description,
   });
   const [isError, setError] = useState(null);
 
@@ -96,11 +97,10 @@ function EditPost({ postcontent }) {
       return;
     }
     // authContext
-    customAxios
-      .put(`/posts/${id}`, {
-        postTitle: postInfo.title,
-        postDescription: postInfo.description,
-      })
+    updatePostApi(id, {
+      title: postInfo.title,
+      description: postInfo.description,
+    })
       .then(() => {
         navigate("/");
       })

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import customAxios from "../../../libs/api/axios";
+import { getPostApi } from "../../../libs/service/postService";
 import EditPosts from "../../../components/EditPost/EditPost";
 
 function EditPost() {
@@ -11,8 +11,8 @@ function EditPost() {
 
   useEffect(() => {
     const fetchPost = async () => {
-      const response = await customAxios.get(`/posts/${id}`);
-      console.log(response.data);
+      //const response = await customAxios.get(`/post/${id}`);
+      const response = await getPostApi(id);
       setPostcontents(response.data);
     };
     fetchPost();
@@ -24,7 +24,7 @@ function EditPost() {
         <EditPosts
           postcontent={postcontent}
           // Dompurify 데이터 받기.
-          description={postcontent.postDescription}
+          description={postcontent.description}
           key={postcontent.postId}
         />
       ))}
