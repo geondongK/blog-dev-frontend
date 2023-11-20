@@ -13,20 +13,17 @@ import {
   faXmark,
   faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
-import customAxios from "../../libs/service/api/axios";
 import { persistor } from "../../redux/store/store";
+import { removeCookies } from "../../utils/Cookies";
 
 function Navbar() {
   const checkedRef = useRef(false);
   const [q, setQ] = useState("");
   const [checked, setChecked] = useState(true);
 
-  // console.log(search, setSearch);
-
   const navigate = useNavigate();
 
-  // 사용자 로그인 상태여부 체크.
-  //   const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
 
   // persistor 세션 값삭 제.
   const purge = async () => {
@@ -42,15 +39,11 @@ function Navbar() {
   };
 
   const handleLogout = () => {
-    customAxios
-      .post("/auth/logout", {})
-      .then(() => {
-        navigate("/");
-        // header 입력
-        // dispatch(logout({}))
-        // window.location.reload();
-      })
-      .catch(() => {});
+    removeCookies("token", {
+      maxAge: 0,
+      path: "/",
+    });
+    navigate("/");
   };
 
   const handleChecked = () => {
@@ -99,58 +92,64 @@ function Navbar() {
           />
         </div>
       </div>
-      {/* {!currentUser ? ( */}
-      <div className="nav-right">
-        <Link to="/login">
-          <button onClick={handleChecked} type="button">
+      {!currentUser ? (
+        <div className="nav-right">
+          <Link to="/login">
+            <button onClick={handleChecked} type="button">
+              <i>
+                <FontAwesomeIcon
+                  className="right-icon"
+                  icon={faRightToBracket}
+                />
+              </i>
+              로그인
+            </button>
+          </Link>
+          <Link to="/register">
+            <button onClick={handleChecked} type="button">
+              <i>
+                <FontAwesomeIcon className="right-icon" icon={faUserPlus} />
+              </i>
+              회원가입
+            </button>
+          </Link>
+        </div>
+      ) : (
+        <div className="nav-right">
+          <Link to="/add">
+            <button onClick={handleChecked} type="button">
+              <i>
+                <FontAwesomeIcon className="right-icon" icon={faPenToSquare} />
+              </i>
+              글작성
+            </button>
+          </Link>
+          <hr />
+          <button
+            onClick={() => {
+              handleLogout();
+              purge();
+              handleChecked();
+            }}
+            type="button"
+          >
             <i>
-              <FontAwesomeIcon className="right-icon" icon={faRightToBracket} />
+              <FontAwesomeIcon
+                className="right-icon"
+                icon={faRightFromBracket}
+              />
             </i>
-            로그인
+            로그아웃
           </button>
-        </Link>
-        <Link to="/register">
-          <button onClick={handleChecked} type="button">
-            <i>
-              <FontAwesomeIcon className="right-icon" icon={faUserPlus} />
-            </i>
-            회원가입
-          </button>
-        </Link>
-      </div>
-      {/* ) : ( */}
-      <div className="nav-right">
-        <Link to="/add">
-          <button onClick={handleChecked} type="button">
-            <i>
-              <FontAwesomeIcon className="right-icon" icon={faPenToSquare} />
-            </i>
-            글작성
-          </button>
-        </Link>
-        <hr />
-        <button
-          onClick={() => {
-            handleLogout();
-            purge();
-            handleChecked();
-          }}
-          type="button"
-        >
-          <i>
-            <FontAwesomeIcon className="right-icon" icon={faRightFromBracket} />
-          </i>
-          로그아웃
-        </button>
-      </div>
-      {/* )} */}
+        </div>
+      )}
       {!checkedRef.current.checked ? (
         <label htmlFor="nav-menu">
-          {/* {!currentUser ? (
+          {!currentUser ? (
             <FontAwesomeIcon icon={faBars} />
           ) : (
-            <h4>{currentUser.user.name}</h4>
-          )} */}
+            <h4>{currentUser.name}</h4>
+          )}
         </label>
       ) : (
         <label htmlFor="nav-menu">
