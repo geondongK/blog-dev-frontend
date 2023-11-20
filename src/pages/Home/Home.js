@@ -1,8 +1,10 @@
 //  eslint-disable
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import moment from "moment";
-import customAxios from "../../libs/api/axios";
-// import authContext from "../../libs/api/AuthContext";
+
+import { deletePostApi } from "../../libs/service/postService";
+import { getAllPostApi } from "../../libs/service/postService";
+
 import PostsCard from "../../components/PostCard/PostCard/PostCard";
 import Loading from "../../components/Loading/Loading";
 
@@ -27,13 +29,7 @@ function Home() {
 
   // 게시물 삭제 기능.
   const deletePost = async (postId) => {
-    // await authContext
-    await customAxios
-      .delete(`/posts/${postId}`, {
-        data: {
-          postId,
-        },
-      })
+    await deletePostApi(postId)
       .then(() => {
         const newPosts = posts.filter((post) => post.postId !== postId);
         setPosts(newPosts);
@@ -52,8 +48,8 @@ function Home() {
         .filter((post) => post)
         .sort(
           (a, b) =>
-            new Date(moment(b.postCreateDate, "YYYY-MM-DD HH:mm:ss")) -
-            new Date(moment(a.postCreateDate, "YYYY-MM-DD HH:mm:ss"))
+            new Date(moment(b.createDate).format("YYYY-MM-DD HH:mm:ss")) -
+            new Date(moment(a.createDate).format("YYYY-MM-DD HH:mm:ss"))
         );
       setBtnActive(sort);
       setPosts(dateDesc);
@@ -63,16 +59,14 @@ function Home() {
         .filter((post) => post)
         .sort(
           (a, b) =>
-            new Date(moment(a.postCreateDate, "YYYY-MM-DD HH:mm:ss")) -
-            new Date(moment(b.postCreateDate, "YYYY-MM-DD HH:mm:ss"))
+            new Date(moment(a.createDate).format("YYYY-MM-DD HH:mm:ss")) -
+            new Date(moment(b.createDate).format("YYYY-MM-DD HH:mm:ss"))
         );
       setBtnActive(sort);
       setPosts(dateAsc);
     } else {
       // 조회수
-      const view = posts
-        .filter((post) => post)
-        .sort((a, b) => b.postView - a.postView);
+      const view = posts.filter((post) => post).sort((a, b) => b.hits - a.hits);
 
       setBtnActive(sort);
       setPosts(view);
@@ -82,14 +76,11 @@ function Home() {
   // 게시물 무한 스크롤 기능.
   const fetch = useCallback(async () => {
     try {
-      const { data } = await customAxios.get(
-        "/posts"
-        // `/post/postlist?limit=10&offset=${page.current}`
-      );
-      setPosts((prevPosts) => [...prevPosts, ...data]);
-      setHasNextPage(data.length === 10);
+      const { data } = await getAllPostApi(10, page.current);
+      setPosts((prevPosts) => [...prevPosts, ...data.data]);
+      setHasNextPage(data.data.length === 10);
 
-      if (data.length) {
+      if (data.data.length) {
         page.current += 10;
       }
     } catch (error) {
