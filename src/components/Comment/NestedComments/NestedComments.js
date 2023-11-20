@@ -8,8 +8,6 @@ import { faHeart as dislike } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as like } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-//import authContext from "../../../libs/api/AuthContext";
-import customAxios from "../../../libs/service/api/axios";
 import {
   getLikeApi,
   addLikeApi,
@@ -59,10 +57,10 @@ function NestedComments({
     await addLikeApi({
       postId: id,
       commentId: addLikeId,
-      userId: currentUser[0].userId,
+      userId: currentUser.userId,
     })
       .then((response) => {
-        setLiked([...liked, ...response.data]);
+        setLiked([...liked, ...response.data.data]);
       })
       .catch(() => {
         // console.log(error);
@@ -71,12 +69,12 @@ function NestedComments({
 
   // 좋아요 삭제
   const handleDeleteLike = async (deleteCommentId) => {
-    await deleteLikeApi(deleteCommentId, currentUser[0].userId)
+    await deleteLikeApi(deleteCommentId, currentUser.userId)
       .then(() => {
         const deleteLiked = liked.filter(
           (deleteLike) =>
             deleteLike.commentId === commentId &&
-            deleteLike.userId !== currentUser[0].userId
+            deleteLike.userId !== currentUser.userId
         );
         setLiked(deleteLiked);
       })
@@ -88,7 +86,7 @@ function NestedComments({
   // 편집 및 삭제
   function dropdownComponent() {
     if (currentUser !== null) {
-      if (writerId === currentUser[0].userId) {
+      if (writerId === currentUser.userId) {
         return (
           <CommentDropdown
             commentId={commentId}
@@ -110,7 +108,7 @@ function NestedComments({
         liked.some(
           (likeButton) =>
             likeButton.commentId === commentId &&
-            likeButton.userId === currentUser[0].userId
+            likeButton.userId === currentUser.userId
         )
       ) {
         return (
@@ -146,7 +144,7 @@ function NestedComments({
   useEffect(() => {
     const fetchLiked = async () => {
       const response = await getLikeApi(id);
-      setLiked(response.data);
+      setLiked(response.data.data);
     };
 
     fetchLiked();
@@ -173,7 +171,9 @@ function NestedComments({
         <div className="nestedcomment-dropdown">{dropdownComponent()}</div>
       </div>
       {isDeleted ? (
-        <p className="nestedcomments-description__deleted">삭제된 댓글입니다</p>
+        <p className="nestedcomments-description__deleted">
+          작성자에 의해 삭제되었습니다.
+        </p>
       ) : (
         <p className="nestedcomments-description">{description}</p>
       )}

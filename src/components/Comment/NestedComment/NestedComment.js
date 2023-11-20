@@ -47,10 +47,10 @@ function NestedComment({
     await addLikeApi({
       postId: id,
       commentId: addLikeId,
-      userId: currentUser[0].userId,
+      userId: currentUser.userId,
     })
       .then((response) => {
-        setLiked([...liked, ...response.data]);
+        setLiked([...liked, ...response.data.data]);
       })
       .catch(() => {
         // console.log(error);
@@ -59,12 +59,12 @@ function NestedComment({
 
   // 좋아요 삭제
   const handleDeleteLike = async (deleteCommentId) => {
-    await deleteLikeApi(deleteCommentId, currentUser[0].userId)
+    await deleteLikeApi(deleteCommentId, currentUser.userId)
       .then(() => {
         const deleteLiked = liked.filter(
           (deleteLike) =>
             deleteLike.commentId === commentId &&
-            deleteLike.userId !== currentUser[0].userId
+            deleteLike.userId !== currentUser.userId
         );
         setLiked(deleteLiked);
       })
@@ -75,7 +75,7 @@ function NestedComment({
 
   function dropdownComponent() {
     if (currentUser !== null) {
-      if (writerId === currentUser[0].userId) {
+      if (writerId === currentUser.userId) {
         return (
           <CommentDropdown
             commentId={commentId}
@@ -97,7 +97,7 @@ function NestedComment({
         liked.some(
           (likeButton) =>
             likeButton.commentId === commentId &&
-            likeButton.userId === currentUser[0].userId
+            likeButton.userId === currentUser.userId
         )
       ) {
         return (
@@ -132,7 +132,7 @@ function NestedComment({
   useEffect(() => {
     const fetchLiked = async () => {
       const response = await getLikeApi(id);
-      setLiked(response.data);
+      setLiked(response.data.data);
     };
 
     fetchLiked();
