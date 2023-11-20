@@ -3,11 +3,11 @@ import "./Post.scss";
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import moment from "moment";
+// import moment from "moment";
 import Postcontent from "../../components/PostContent/PostContent";
 import PostComments from "../../components/Comment/Comment/Comment";
 import PostCommentForm from "../../components/Comment/CommentForm/CommentForm";
-import customAxios from "../../libs/service/api/axios";
+
 import {
   getCommentApi,
   createCommentApi,
@@ -31,9 +31,8 @@ function Post() {
   const [loading, setLoading] = useState(true);
 
   // 현재시간.
-  const nowTime = moment().format("YYYY-MM-DD HH:mm:ss");
+  // const nowTime = moment().format("YYYY-MM-DD HH:mm:ss");
 
-  // 사용자 로그인 상태여부 체크.
   const { currentUser } = useSelector((state) => state.user);
 
   const { id } = useParams();
@@ -58,15 +57,15 @@ function Post() {
     await createCommentApi({
       // id: null,
       postId: id,
-      writerId: currentUser[0].userId,
+      writerId: currentUser.userId,
       description: newComment,
-      writer: currentUser[0].name,
+      writer: currentUser.name,
       commentGroup: parentId,
       parentId,
       //createDate: nowTime,
     })
       .then((response) => {
-        setPostComments([...postComments, ...response.data]);
+        setPostComments([...postComments, ...response.data.data]);
         setActiveComment(null);
       })
       .catch(() => {
@@ -146,7 +145,7 @@ function Post() {
       setLoading(true);
       try {
         const response = await getPostApi(id);
-        setPostcontents(response.data);
+        setPostcontents(response.data.data);
       } catch (error) {
         // console.log(error);
       }
@@ -157,9 +156,9 @@ function Post() {
       setLoading(true);
       try {
         const response = await getCommentApi(id);
-        setPostComments(response.data);
+        setPostComments(response.data.data);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
       setLoading(false);
     };
