@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 // import PostCard from '../PostCard/PostCard';
 import { useSelector } from "react-redux";
-import customAxios from "../../../libs/api/axios";
+import { getCommentApi } from "../../../libs/service/commentService";
 import "moment/locale/ko";
 import { ReactComponent as Avatar } from "../../../assets/images/avatar.svg";
 import Dropdown from "../Dropdown/Dropdown";
@@ -18,41 +18,26 @@ function PostCard({ post, deletePost }) {
   // 게시물 댓글 수
   const [countComment, setCountComment] = useState([]);
 
-  // 게시물 조회 업데이트.
-  // const handleViewClick = (postId) => {
-  //   customAxios
-  //     .put("/post/view", {
-  //       id: postId,
-  //     })
-  //     .then(() => {
-  //       // console.log(response.data);
-  //     })
-  //     .catch(() => {
-  //       // console.log(error);
-  //     });
-  // };
-
   // 현재 사용자가 작성한 게시물만 표시.
   function dropdownComponent() {
-    return <Dropdown postId={post.postId} deletePost={deletePost} />;
-    // if (currentUser !== null) {
-    //   if (post.postUserId === currentUser.user.id) {
-    //     return <Dropdown postId={post.postId} deletePost={deletePost} />;
-    //   }
-    //   return null;
-    // }
-    // return null;
+    // return <Dropdown postId={post.postId} deletePost={deletePost} />;
+    if (currentUser !== null) {
+      if (post.writerId === currentUser.userId) {
+        return <Dropdown postId={post.postId} deletePost={deletePost} />;
+      }
+      return null;
+    }
+    return null;
   }
 
-  //   useEffect(() => {
-  //     const fetchCountComment = async () => {
-  //       const response = await customAxios.post(`/post/countComment`, {
-  //         postUserId: post.id,
-  //       });
-  //       setCountComment(response.data);
-  //     };
-  //     fetchCountComment();
-  //   }, []);
+  // 게시물 댓글 수 가져오기.
+  useEffect(() => {
+    const fetchCountComment = async () => {
+      const response = await getCommentApi(post.postId);
+      setCountComment(response.data.data);
+    };
+    fetchCountComment();
+  }, []);
 
   return (
     <div className="postcard">
@@ -61,9 +46,9 @@ function PostCard({ post, deletePost }) {
           <div className="postcard-info">
             <Avatar width="30px" height="30px" className="postcard-info-img" />
             <div className="postcard-info-details">
-              <span className="postcard-name">{post.postName}</span>
+              <span className="postcard-name">{post.writer}</span>
               <span className="postcard-date">
-                {moment(post.postCreateDate, "YYYY.MM.DD HH:mm:ss").fromNow()}
+                {moment(post.createDate, "YYYY.MM.DD HH:mm:ss").fromNow()}
               </span>
             </div>
           </div>
@@ -77,7 +62,7 @@ function PostCard({ post, deletePost }) {
               }}
               to={`/post/${post.postId}`}
             >
-              {post.postTitle}
+              {post.title}
             </Link>
           </h4>
         </div>
@@ -85,11 +70,11 @@ function PostCard({ post, deletePost }) {
           <span>
             <FontAwesomeIcon icon={faEye} />
           </span>
-          <span>{post.postView}</span>
+          <span>{post.hits}</span>
           <span className="footer-icon">
             <FontAwesomeIcon icon={faCommentDots} />
           </span>
-          {/* <span>{countComment.length}</span> */}
+          <span>{countComment.length}</span>
         </div>
       </div>
     </div>
