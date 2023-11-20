@@ -1,4 +1,5 @@
-import customAxios from "./api/axios";
+import customAxios from "../api/axios";
+import authContext from "../api/AuthContext";
 
 /* 전체 게시물 */
 export const getAllPostApi = (limit, offset) => {
@@ -12,17 +13,17 @@ export const getPostApi = (postId) => {
 
 /* 게시물 작성 */
 export const createPostApi = (values) => {
-  return customAxios.post("/post", values);
+  return authContext.post("/post", values);
 };
 
 /* 게시물 수정 */
 export const updatePostApi = (postId, value) => {
-  return customAxios.put(`/post/${postId}`, value);
+  return authContext.put(`/post/${postId}`, value);
 };
 
 /* 게시물 삭제 */
 export const deletePostApi = (postId) => {
-  return customAxios.delete(`/post/${postId}`);
+  return authContext.delete(`/post/${postId}`);
 };
 
 /* 게시물 검색 */
@@ -30,4 +31,8 @@ export const searchPostApi = (query, limit, offset) => {
   return customAxios.get(
     `/post/search${query}&limit=${limit}&offset=${offset}`
   );
+};
+
+export const uploadFileApi = (value) => {
+  return authContext.post("/upload", value);
 };
