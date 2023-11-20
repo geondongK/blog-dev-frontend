@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import moment from "moment";
 import { useLocation } from "react-router-dom";
-import customAxios from "../../libs/service/api/axios";
 import { searchPostApi, deletePostApi } from "../../libs/service/postService";
 import PostCard from "../../components/PostCard/PostCard/PostCard";
 import Loading from "../../components/Loading/Loading";
@@ -28,9 +27,7 @@ function Search() {
 
   // 게시물 삭제 기능.
   const deletePost = async (postId) => {
-    console.log(postId);
     // eslint-disable-next-line no-alert
-    // 인증
     await deletePostApi(postId)
       .then(() => {
         const newPosts = posts.filter((post) => post.postId !== postId);
@@ -67,7 +64,7 @@ function Search() {
       setPosts(dateAsc);
     } else {
       // 조회수
-      const view = posts.filter((post) => post).sort((a, b) => b.view - a.view);
+      const view = posts.filter((post) => post).sort((a, b) => b.hits - a.hits);
 
       setBtnActive(sort);
       setPosts(view);
@@ -78,10 +75,10 @@ function Search() {
   const fetch = useCallback(async () => {
     try {
       const { data } = await searchPostApi(query, 10, page.current);
-      setPosts((prevPosts) => [...prevPosts, ...data]);
-      setHasNextPage(data.length === 10);
+      setPosts((prevPosts) => [...prevPosts, ...data.data]);
+      setHasNextPage(data.data.length === 10);
 
-      if (data.length) {
+      if (data.data.length) {
         page.current += 10;
       }
     } catch (error) {
