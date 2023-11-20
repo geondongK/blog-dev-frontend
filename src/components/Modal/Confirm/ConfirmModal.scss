@@ -8,15 +8,16 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 2;
+  text-align: center;
 
   .location {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80%;
+    width: 70%;
     @include sm {
-      width: 100%;
+      width: 80%;
     }
 
     .container {
@@ -35,14 +36,14 @@
         padding: 10px 0;
         font-size: $base-font-lg;
 
-        button {
-          @include btn;
-          float: right;
-          font-size: $base-font-size;
-          border: 0;
-          outline: 0;
-          padding: 1px 1px;
-        }
+        // button {
+        //   @include btn;
+        //   float: right;
+        //   font-size: $base-font-size;
+        //   border: 0;
+        //   outline: 0;
+        //   padding: 1px 1px;
+        // }
       }
 
       .body {
@@ -55,16 +56,20 @@
         padding: 15px 0;
 
         .cancel-button {
-          color: $base-error-color;
+          color: $base-bg-color;
+          background-color: $base-error-color;
+          margin-left: 5px;
         }
 
         button {
-          @include btn;
-          padding: 8px;
+          cursor: pointer;
+          border: none;
+          padding: 10px;
           font-weight: bold;
           font-size: $base-font-size;
           border-radius: $base-border-radius;
-          color: $base-blue-color;
+          background-color: $base-blue-color;
+          color: $base-bg-color;
         }
       }
     }
