@@ -66,7 +66,7 @@ function Dropdown({ postId, deletePost }) {
           setconfirmMoadlCheck={setconfirmMoadlCheck}
           confirmMoadlCheck={confirmMoadlCheck}
           deleteContent={deletePost}
-          postId={postId}
+          id={postId}
         />
       )}
     </div>
