@@ -13,7 +13,7 @@ function EditPost() {
     const fetchPost = async () => {
       //const response = await customAxios.get(`/post/${id}`);
       const response = await getPostApi(id);
-      setPostcontents(response.data);
+      setPostcontents(response.data.data);
     };
     fetchPost();
   }, []);

@@ -11,9 +11,12 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import ImageResize from "quill-image-resize";
-import customAxios from "../../../libs/service/api/axios";
+import customAxios from "../../../libs/api/axios";
 // import authContext from "../../../libs/api/AuthContext";
-import { createPostApi } from "../../../libs/service/postService";
+import {
+  createPostApi,
+  uploadFileApi,
+} from "../../../libs/service/postService";
 import loading from "../../../assets/images/loading.gif";
 
 Quill.register("modules/ImageResize", ImageResize);
@@ -58,19 +61,19 @@ function AddPost() {
         const compressedFile = await imageCompression(file, options);
 
         const formData = new FormData();
+
         formData.append("file", compressedFile);
 
-        const response = await customAxios.post("/upload", formData);
-        // const response = await authContext.post("/upload", formData);
+        const response = await uploadFileApi(formData);
 
-        // console.log(response);
-
-        const messgae = response.data.error;
-
-        if (messgae === "File too large") {
+        if (compressedFile.size > 50000) {
           window.alert("5MB 이하 사진만 올려주세요");
           editor().deleteText(range.index);
-        } else if (messgae === "Only images are allowed") {
+        } else if (
+          !compressedFile.type === "image/jpeg" ||
+          !compressedFile.type === "image/png" ||
+          !compressedFile.type === "image/gif"
+        ) {
           window.alert("이미지 파일만 올려주세요.");
           editor().deleteText(range.index);
         }
@@ -99,11 +102,15 @@ function AddPost() {
     e.preventDefault();
 
     if (postInfo.title.length < 1 || postInfo.title.replace(/\s/g, "") === "") {
-      setError("제목을 작성해 주세요.");
+      setError("제목을 작성해 주세요");
+      return;
+    }
+    if (postInfo.title.length >= 50) {
+      setError("제목은 50자 이내로 작성해 주세요");
       return;
     }
     if (postInfo.description.length < 1) {
-      setError("본문을 작성해 주세요.");
+      setError("본문을 작성해 주세요");
       return;
     }
     // authContext
@@ -117,7 +124,7 @@ function AddPost() {
         navigate("/");
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
   };
 
