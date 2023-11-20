@@ -1,4 +1,5 @@
-import customAxios from "./api/axios";
+import customAxios from "../api/axios";
+import authContext from "../api/AuthContext";
 
 /* 좋아요 조회 */
 export const getLikeApi = (postId) => {
@@ -7,10 +8,10 @@ export const getLikeApi = (postId) => {
 
 /* 좋아요 추가 */
 export const addLikeApi = (value) => {
-  return customAxios.post(`/like`, value);
+  return authContext.post(`/like`, value);
 };
 
 /* 좋아요 삭제 */
 export const deleteLikeApi = (commentId, userId) => {
-  return customAxios.delete(`/like/${commentId}/${userId}`);
+  return authContext.delete(`/like/${commentId}/${userId}`);
 };
