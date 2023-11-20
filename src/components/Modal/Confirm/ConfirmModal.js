@@ -1,7 +1,7 @@
 import React from "react";
 import "./ConfirmModal.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 function ConfirmModal({
   title,
@@ -10,11 +10,11 @@ function ConfirmModal({
   setconfirmMoadlCheck,
   confirmMoadlCheck,
   deleteContent,
-  postId,
+  id,
 }) {
   const handleDeleteContent = () => {
     if (confirmMoadlCheck === true) {
-      deleteContent(postId);
+      deleteContent(id);
       closeModal(false);
     }
   };
@@ -25,14 +25,14 @@ function ConfirmModal({
         <div className="container">
           <div className="title">
             <span>{title}</span>
-            <button
+            {/* <button
               onClick={() => {
                 closeModal(false);
               }}
               type="button"
             >
               <FontAwesomeIcon icon={faXmark} />
-            </button>
+            </button> */}
           </div>
           <div className="body">
             <p>{body}</p>
