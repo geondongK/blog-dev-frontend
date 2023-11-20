@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { ReactComponent as KaKaoIcon } from "../../../assets/images/kakaoLogin.svg";
-import customAxios from "../../../libs/service/api/axios";
 import { registerApi } from "../../../libs/service/authService";
 
 function Register() {
@@ -17,6 +16,7 @@ function Register() {
   const schema = yup.object().shape({
     name: yup
       .string()
+      .min(2, "별명은 최소 2자 이상 입력하셔야 합니다.")
       .max(6, "별명은 최대 6자까지 입력할 수 있습니다.")
       .required("별명을 입력해 주세요.")
       .trim(""),
@@ -44,24 +44,6 @@ function Register() {
     mode: "onSubmit",
   });
 
-  // const onSubmit = async (values) => {
-  //   // reset();
-  //   await registerApi(values)
-  //     .then((response) => {
-  //       if (response.data.error) {
-  //         setHandleRegiter(true);
-  //         setRegisterMessage(response.data.error);
-  //         console.log(response.data.error);
-  //       } else {
-  //         console.log(response.data);
-  //         window.alert("회원가입되었습니다.");
-  //         navigate("/login");
-  //       }
-  //     })
-  //     .catch(() => {
-  //       // console.log(error);
-  //     });
-  // };
   const onSubmit = async (values) => {
     await registerApi(values)
       .then((response) => {
