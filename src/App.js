@@ -6,6 +6,7 @@ import "./sass/main.scss";
 
 // components
 import Navbar from "./components/Navbar/Navbar";
+// import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 
 // pages
 import Home from "./pages/Home/Home";
@@ -17,10 +18,15 @@ import AddPost from "./pages/EditPost/AddPost/AddPost";
 import EditPost from "./pages/EditPost/EditPost/EditPost";
 import Search from "./pages/Search/SearchPage";
 
+// api
+import AuthContext from "./libs/api/AuthContext";
+
 function App() {
   return (
     <BrowserRouter>
+      <AuthContext />
       <Navbar />
+      {/* <ScrollToTop /> */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
