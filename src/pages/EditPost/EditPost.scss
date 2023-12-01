@@ -49,7 +49,8 @@
 
   .editpost-submit {
     display: flex;
-    justify-content: right;
+    align-items: center;
+    justify-content: space-between;
     margin-top: 50px;
     @include sm {
       margin-top: 70px;
