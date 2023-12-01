@@ -1,5 +1,5 @@
 import customAxios from "../api/axios";
-import authContext from "../api/AuthContext";
+import authContext from "../api/instance";
 
 /* 댓글 작성 */
 export const createCommentApi = (newComment, parentId) => {

@@ -1,5 +1,5 @@
 import customAxios from "../api/axios";
-import authContext from "../api/AuthContext";
+import authContext from "../api/instance";
 
 /* 좋아요 조회 */
 export const getLikeApi = (postId) => {
