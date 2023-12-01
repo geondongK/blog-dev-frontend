@@ -11,13 +11,14 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import ImageResize from "quill-image-resize";
-import customAxios from "../../../libs/api/axios";
-// import authContext from "../../../libs/api/AuthContext";
+
 import {
   createPostApi,
   uploadFileApi,
 } from "../../../libs/service/postService";
 import loading from "../../../assets/images/loading.gif";
+
+import fnCheckByte from "../../../utils/CheckByte";
 
 Quill.register("modules/ImageResize", ImageResize);
 function AddPost() {
@@ -66,9 +67,10 @@ function AddPost() {
 
         const response = await uploadFileApi(formData);
 
-        if (compressedFile.size > 50000) {
+        if (compressedFile.size > 5 * 1024 * 1024) {
           window.alert("5MB 이하 사진만 올려주세요");
           editor().deleteText(range.index);
+          return;
         } else if (
           !compressedFile.type === "image/jpeg" ||
           !compressedFile.type === "image/png" ||
@@ -76,6 +78,7 @@ function AddPost() {
         ) {
           window.alert("이미지 파일만 올려주세요.");
           editor().deleteText(range.index);
+          return;
         }
 
         // 압축 결과
@@ -95,6 +98,7 @@ function AddPost() {
   };
 
   const handleChangeDescription = (value) => {
+    fnCheckByte(value);
     setPostInfo({ ...postInfo, description: value });
   };
 
@@ -113,6 +117,7 @@ function AddPost() {
       setError("본문을 작성해 주세요");
       return;
     }
+
     // authContext
     createPostApi({
       writerId: currentUser.userId,
@@ -127,6 +132,8 @@ function AddPost() {
         // console.log(error);
       });
   };
+
+  // useEffect(() => {}, [fnCheckByte]);
 
   const modules = useMemo(
     () => ({
@@ -201,6 +208,9 @@ function AddPost() {
             />
           </div>
           <div className="editpost-submit">
+            <sup>
+              (<span id="nowByte">0</span>/5000자)
+            </sup>
             <button type="submit">저장</button>
           </div>
           {isError !== null && (

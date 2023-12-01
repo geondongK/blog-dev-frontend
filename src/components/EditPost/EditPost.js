@@ -8,6 +8,7 @@ import ImageResize from "quill-image-resize";
 
 import { updatePostApi, uploadFileApi } from "../../libs/service/postService";
 import loading from "../../assets/images/loading.gif";
+import fnCheckByte from "../../utils/CheckByte";
 
 Quill.register("modules/ImageResize", ImageResize);
 function EditPost({ postcontent }) {
@@ -55,9 +56,10 @@ function EditPost({ postcontent }) {
         // const response = await authContext.post("/upload", formData);
         const response = await uploadFileApi(formData);
 
-        if (compressedFile.size > 50000) {
+        if (compressedFile.size > 5 * 1024 * 1024) {
           window.alert("5MB 이하 사진만 올려주세요");
           editor().deleteText(range.index);
+          return;
         } else if (
           !compressedFile.type === "image/jpeg" ||
           !compressedFile.type === "image/png" ||
@@ -65,10 +67,11 @@ function EditPost({ postcontent }) {
         ) {
           window.alert("이미지 파일만 올려주세요.");
           editor().deleteText(range.index);
+          return;
         }
 
         // 압축 결과
-        const IMG_URL = response.data.location;
+        const IMG_URL = response.data;
 
         editor.deleteText(range.index, 1);
 
@@ -84,6 +87,7 @@ function EditPost({ postcontent }) {
   };
 
   const handleChangeDescription = (value) => {
+    fnCheckByte(value);
     setPostInfo({ ...postInfo, description: value });
   };
 
@@ -185,6 +189,10 @@ function EditPost({ postcontent }) {
             />
           </div>
           <div className="editpost-submit">
+            <sup>
+              (<span id="nowByte">{postcontent.description.length}</span>
+              /5000자)
+            </sup>
             <button type="submit">저장</button>
           </div>
           {isError !== null && (
