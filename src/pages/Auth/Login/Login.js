@@ -7,7 +7,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 
-import { setCookies } from "../../../utils/Cookies";
 import { loginSuccess } from "../../../redux/slices/userSlice";
 import { ReactComponent as KaKaoIcon } from "../../../assets/images/kakaoLogin.svg";
 import { loginApi } from "../../../libs/service/authService";
@@ -25,8 +24,9 @@ function Login() {
     email: yup
       .string()
       .required("이메일을 입력해 주세요.")
-      .email("이메일 형식이 올바르지 않습니다."),
-    password: yup.string().required("비밀번호를 입력해 주세요."),
+      .email("이메일 형식이 올바르지 않습니다.")
+      .trim(""),
+    password: yup.string().required("비밀번호를 입력해 주세요.").trim(""),
   });
 
   const {
@@ -46,21 +46,11 @@ function Login() {
   const onSubmit = async (values) => {
     await loginApi(values)
       .then((response) => {
-        const { user, token, expiresTime } = response.data.data;
-        const now = new Date().getTime();
+        const { user } = response.data.data;
 
-        // 현재 시간 + 만료시간
-        const expires = new Date(now + expiresTime * 1000);
         // 로컬 스토리지에 현재 이용자 저장.
         dispatch(loginSuccess(user));
 
-        // 쿠키 저장
-        setCookies("token", token, {
-          path: "/",
-          expires: expires,
-          httpOnly: process.env.REACT_APP_COOKIE_HTTPONLY,
-          secure: process.env.REACT_APP_COOKIE_SECURE,
-        });
         navigate("/");
       })
       .catch((error) => {
