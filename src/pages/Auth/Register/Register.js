@@ -23,8 +23,14 @@ function Register() {
     email: yup
       .string()
       .required("이메일을 입력해 주세요.")
-      .email("이메일 형식이 올바르지 않습니다."),
-    password: yup.string().required("비밀번호를 입력해 주세요."),
+      .email("이메일 형식이 올바르지 않습니다.")
+      .trim(""),
+    password: yup
+      .string()
+      .required("비밀번호를 입력해 주세요.")
+      .min(4, "비밀번호는 최소 4자 이상 입력하셔야 합니다.")
+      .max(16, "비밀번호는 최대 16자까지 입력할 수 있습니다.")
+      .trim(""),
     passwordConfirm: yup.string().required("비밀번호 확인을 입력해 주세요."),
   });
 
