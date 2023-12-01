@@ -36,6 +36,9 @@
   .postcontent-title {
     margin-top: 10px;
     margin-bottom: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 
     .postcontent-title-body {
       display: inline-block;
