@@ -1,5 +1,5 @@
 //  eslint-disable
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import { useLocation } from "react-router-dom";
 import { searchPostApi, deletePostApi } from "../../libs/service/postService";
@@ -12,16 +12,18 @@ function Search() {
     { key: 2, type: "오래된순" },
     { key: 3, type: "조회수" },
   ];
+
+  const query = decodeURI(useLocation().search);
+
   // 게시물 출력.
   const [posts, setPosts] = useState([]);
   const [btnActive, setBtnActive] = useState("");
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState(query);
 
   const observerTargetEl = useRef(null);
   const page = useRef(0);
-
-  const query = decodeURI(useLocation().search);
 
   // const query = URLSearchParams(location.search);
 
@@ -72,21 +74,42 @@ function Search() {
   };
 
   // 게시물 무한 스크롤 기능.
-  const fetch = useCallback(async () => {
-    try {
+  // const fetch = useCallback(async () => {
+  //   try {
+  //     const { data } = await searchPostApi(query, 10, page.current);
+  //     console.log(data);
+  //     setPosts((prevPosts) => [...prevPosts, ...data.data]);
+  //     setHasNextPage(data.data.length === 10);
+
+  //     if (data.data.length) {
+  //       page.current += 10;
+  //     }
+  //   } catch (error) {
+  //     // console.log(error);
+  //   }
+  // }, [query]);
+
+  useEffect(() => {
+    setSearch(query);
+
+    const fetch = async () => {
       const { data } = await searchPostApi(query, 10, page.current);
-      setPosts((prevPosts) => [...prevPosts, ...data.data]);
+
+      if (query !== search) setPosts(data.data);
+      else setPosts((prevPosts) => [...prevPosts, ...data.data]);
+
       setHasNextPage(data.data.length === 10);
 
       if (data.data.length) {
         page.current += 10;
       }
-    } catch (error) {
-      // console.log(error);
-    }
-  }, []);
+    };
 
-  useEffect(() => {
+    if (query !== search) {
+      page.current = 0;
+      fetch();
+    }
+
     if (!observerTargetEl.current || !hasNextPage) {
       setLoading(false);
       return;
@@ -99,10 +122,10 @@ function Search() {
     io.observe(observerTargetEl.current);
 
     setBtnActive("최신순");
-    // return () => {
-    //     io.disconnect();
-    // };
-  }, [fetch, hasNextPage]);
+    return () => {
+      io.disconnect();
+    };
+  }, [query, fetch, hasNextPage]);
 
   return (
     <div className="home">
