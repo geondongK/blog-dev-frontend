@@ -14,7 +14,7 @@ import {
   faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
 import { persistor } from "../../redux/store/store";
-import { removeCookies } from "../../utils/Cookies";
+import { logoutApi } from "../../libs/service/authService";
 
 function Navbar() {
   const checkedRef = useRef(false);
@@ -38,12 +38,14 @@ function Navbar() {
     }
   };
 
-  const handleLogout = () => {
-    removeCookies("token", {
-      maxAge: 0,
-      path: "/",
-    });
-    navigate("/");
+  const handleLogout = async () => {
+    await logoutApi()
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        // console.log(error);
+      });
   };
 
   const handleChecked = () => {
