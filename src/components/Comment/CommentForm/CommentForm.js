@@ -1,13 +1,12 @@
 // eslint-disable
 import React, { useState } from "react";
 import "./CommentForm.scss";
+import { fnCommentCheckByte } from "../../../utils/CheckByte";
 
 function CommentForm({
   handleSubmit,
   submitLabel,
   textLabel,
-  handleCancel,
-  handleCancelButton = false,
   initialText = "",
 }) {
   // 댓글 작성.
@@ -17,6 +16,15 @@ function CommentForm({
     e.preventDefault();
     handleSubmit(newComment);
     setNewComment("");
+
+    document.querySelector("#now-byte").innerText = 0;
+    document.querySelector("#comment-button__save").style.display = "none";
+    document.querySelector("#no-comment-button__save").style.display = "inline";
+  };
+
+  const writeComment = (comment) => {
+    fnCommentCheckByte(comment);
+    setNewComment(comment);
   };
 
   return (
@@ -28,24 +36,31 @@ function CommentForm({
           type="text"
           value={newComment}
           onChange={(e) => {
-            setNewComment(e.target.value);
+            writeComment(e.target.value);
+            //setNewComment(e.target.value);
           }}
         />
         <div className="comment-button">
-          {newComment !== "" && newComment.trim("") ? (
-            <button type="submit">{submitLabel}</button>
-          ) : (
-            <button type="button">{submitLabel}</button>
-          )}
-          {handleCancelButton && (
+          <sub className="comment-sub">
+            (<span id="now-byte">0</span>/1000자)
+          </sub>
+          <div>
             <button
-              // hidden={buttonHidden}
-              onClick={handleCancel}
+              style={{ display: "none" }}
+              className="save-button"
+              id="comment-button__save"
+              type="submit"
+            >
+              {submitLabel}
+            </button>
+            <button
+              className="save-button"
+              id="no-comment-button__save"
               type="button"
             >
-              취소
+              {submitLabel}
             </button>
-          )}
+          </div>
         </div>
       </form>
     </div>

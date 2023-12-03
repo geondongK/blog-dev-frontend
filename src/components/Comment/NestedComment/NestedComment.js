@@ -7,7 +7,7 @@ import { faHeart as dislike } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as like } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import CommentForm from "../CommentForm/CommentForm";
+import EditCommentForm from "../CommentForm/EditCommentForm";
 import { ReactComponent as Avatar } from "../../../assets/images/avatar.svg";
 import CommentDropdown from "../CommentDropdown/CommentDropdown";
 import {
@@ -159,7 +159,7 @@ function NestedComment({
       </div>
       {isEditing && (
         <div className="nestedcomment-active">
-          <CommentForm
+          <EditCommentForm
             submitLabel="댓글 수정"
             textLabel="수정"
             handleCancelButton

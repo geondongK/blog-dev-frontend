@@ -51,9 +51,6 @@ function Post() {
 
   // 댓글 or 대댓글 작성.
   const addComment = async (newComment, parentId) => {
-    // await authContext
-
-    // .post("/comment", {
     await createCommentApi({
       // id: null,
       postId: id,

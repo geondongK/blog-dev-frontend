@@ -15,7 +15,7 @@ import {
 } from "../../../libs/service/likeService";
 import { ReactComponent as Avatar } from "../../../assets/images/avatar.svg";
 import CommentDropdown from "../CommentDropdown/CommentDropdown";
-import CommentForm from "../CommentForm/CommentForm";
+import EditCommentForm from "../CommentForm/EditCommentForm";
 
 function NestedComments({
   commentId,
@@ -200,7 +200,7 @@ function NestedComments({
       {/* 대댓글 작성 */}
       <div className="nestedcomments-active">
         {isReplying && (
-          <CommentForm
+          <EditCommentForm
             submitLabel="답글달기"
             textLabel="답글 달기"
             handleCancelButton
@@ -214,7 +214,7 @@ function NestedComments({
         )}
         {/* likedButtonComponent() 코드로 동작함 */}
         {isEditing && (
-          <CommentForm
+          <EditCommentForm
             submitLabel="댓글 수정"
             textLabel="수정"
             handleCancelButton
