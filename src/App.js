@@ -6,7 +6,7 @@ import "./sass/main.scss";
 
 // components
 import Navbar from "./components/Navbar/Navbar";
-// import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 
 // pages
 import Home from "./pages/Home/Home";
@@ -26,7 +26,7 @@ function App() {
     <BrowserRouter>
       <AuthContext />
       <Navbar />
-      {/* <ScrollToTop /> */}
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
