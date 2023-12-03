@@ -9,20 +9,36 @@
     outline: none;
     resize: none;
     overflow: hidden;
+
     // background-color: transparent;
   }
 
   .comment-button {
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
     margin-top: 5px;
 
-    button {
+    .save-button {
       @include btn;
       padding: 10px;
       border-radius: $base-border-radius;
-      background: $base-blue-color;
+      background: #9e9e9e;
       color: white;
       margin-right: 5px;
+      cursor: default;
+    }
+
+    .cancel-button {
+      @include btn;
+      padding: 10px;
+      border-radius: $base-border-radius;
+      background: #3d5afe;
+      color: white;
+      margin-right: 5px;
+      cursor: pointer;
+      &:hover {
+        background-color: #303f9f;
+      }
     }
   }
 }
