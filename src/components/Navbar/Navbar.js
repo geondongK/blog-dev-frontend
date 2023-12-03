@@ -34,6 +34,7 @@ function Navbar() {
     if (e.key === "Enter") {
       if (q.length >= 1) {
         navigate(`/search?q=${q}`);
+        window.scrollTo(0, 0);
       }
     }
   };
