@@ -8,7 +8,7 @@ import ImageResize from "quill-image-resize";
 
 import { updatePostApi, uploadFileApi } from "../../libs/service/postService";
 import loading from "../../assets/images/loading.gif";
-import fnCheckByte from "../../utils/CheckByte";
+import { fnPostCheckByte } from "../../utils/CheckByte";
 
 Quill.register("modules/ImageResize", ImageResize);
 function EditPost({ postcontent }) {
@@ -87,7 +87,7 @@ function EditPost({ postcontent }) {
   };
 
   const handleChangeDescription = (value) => {
-    fnCheckByte(value);
+    fnPostCheckByte(value);
     setPostInfo({ ...postInfo, description: value });
   };
 
@@ -97,7 +97,7 @@ function EditPost({ postcontent }) {
       setError("제목을 작성해 주세요.");
       return;
     }
-    if (postInfo.title.length >= 50) {
+    if (postInfo.title.length > 50) {
       setError("제목은 50자 이내로 작성해 주세요");
       return;
     }
@@ -190,10 +190,15 @@ function EditPost({ postcontent }) {
           </div>
           <div className="editpost-submit">
             <sup>
-              (<span id="nowByte">{postcontent.description.length}</span>
+              (<span id="now-byte">{postcontent.description.length}</span>
               /5000자)
             </sup>
-            <button type="submit">저장</button>
+            <button id="save-button" type="submit">
+              저장
+            </button>
+            <button id="no-save-button" type="button" hidden>
+              저장
+            </button>
           </div>
           {isError !== null && (
             <div className="errors-message"> {isError} </div>
